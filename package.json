@@ -9,8 +9,7 @@
     "winston": "^3.3.3",
     "yargs": "^16.0.3",
     "xbytes": "^1.6.2",
-    "polarity-validator": "git+ssh://git@bitbucket.org:breachintel/polarity-validator.git#0.1.4",
-    "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.1-beta",
+    "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.3-beta",
     "statman-stopwatch": "^2.11.1",
     "papaparse": "^5.3.0",
     "dotenv": "^8.2.0"
