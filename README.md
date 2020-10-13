@@ -6,6 +6,17 @@ This is a Node.js based helper library for uploading CSV files in an automated f
 
 This tool is currently in `beta`.  If you're interested in using this tool please contact us at support@polarity.io for assistance.
 
+# Installation
+
+This script can be run from any server with Node.js 10+ installed.  In most cases it will be easiest to install onto your Polarity Server.  You can install by downloading the release `tgz` file under the `releases` page on github or you can install via `git`.  If installing via `git` you would use the following commands:  
+
+```
+git clone https://github.com/polarityio/polarity-csv-loader
+cd polarity-csv-loader
+npm install
+chmod u+x polarity-csv-loader.sh
+```
+
 # Overview
 
 The Polarity CSV Loader tool provides a CLI interface to read CSV files in from a given directory.  The data in the CSV will be loaded into a Polarity channel of the same name.  **Prior to uploading the CSV, the Channel will have its existing data cleared**. 
@@ -44,7 +55,17 @@ Options:
 
 ### Directory Structure
 
-When running the script you must pass a `--directory`.  This is the directory where `csv` files will be read from.  For a file to be loaded, a matching channel must be found in the configured Polarity instance.  Also ensure that the user you are connecting to Polarity as has `admin` permissions on the channel (this is required so the channel can be cleared).  
+When running the script you must pass a `--directory`.  This is the directory where `csv` files will be read from.  For a file to be loaded, a matching channel must be found in the configured Polarity instance.  Also ensure that the user you are connecting to Polarity as has `admin` permissions on the channel (this is required so the channel can be cleared).  Assuming you pass `--directory /polarity-uploads` your directory structure would look like:
+
+```
+/polarity-uploads
+|-- my_assets.csv
+|-- /completed
+|---- my_assets-1602594339265.csv
+|-- /failed
+```
+
+In the above example, when running the `polarity-csv-loader` script, the file `my_assets.csv` will be loaded and then moved to the `completed` directory if successful (note that the `completed` and `failed` directories will be created for you automatically).
 
 ### Example Configurations
 
