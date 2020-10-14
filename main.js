@@ -13,13 +13,11 @@ const loadCmd = {
     return yargs
       .option('username', {
         type: 'string',
-        //demand: 'You must provide the Polarity "username" to upload data as',
         nargs: 1,
         describe: 'Username to login as'
       })
       .option('password', {
         type: 'string',
-        demand: 'You must provide the password for the provided Polarity username',
         nargs: 1,
         describe: 'Password for the given Polarity username'
       })
@@ -63,9 +61,9 @@ const loadCmd = {
     }
 
     Logger.info('Starting', { url, username, password: '**********', directory });
-    try {
-      const polarity = new Polarity(Logger);
+    const polarity = new Polarity(Logger);
 
+    try {
       await polarity.connect({
         host: url,
         username: username,
@@ -93,16 +91,17 @@ const loadCmd = {
           await moveFile(path.join(directory, 'failed'), filePath, simulate);
         }
       }
-
-      const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate);
-      Logger.info('Removing old completed files', { cleanupResult });
-
-      Logger.info(`Total Time to Load: ${stopwatch.read()}`);
-      Logger.info('Disconnecting from Polarity');
-      await polarity.disconnect();
     } catch (e) {
-      console.error(e);
       Logger.error('Error loading CSV files', e);
+    } finally {
+      const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate);
+      Logger.info('Removed old completed files', { cleanupResult });
+      Logger.info(`Total Run Time: ${stopwatch.read()}`);
+
+      if (polarity && polarity.isConnected) {
+        Logger.info('Disconnecting from Polarity');
+        await polarity.disconnect();
+      }
     }
   }
 };
