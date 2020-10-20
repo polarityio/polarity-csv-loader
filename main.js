@@ -43,11 +43,31 @@ const loadCmd = {
         type: 'boolean',
         default: false,
         describe: 'If provided, the loader will skip the first row in the CSV and treat it as a header'
+      })
+      .option('rejectUnauthorized', {
+        type: 'boolean',
+        default: true,
+        describe: 'If provided, the loader will skip the first row in the CSV and treat it as a header'
+      })
+      .option('proxy', {
+        type: 'string',
+        default: '',
+        nargs: 1,
+        describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
       });
   },
   handler: async (argv) => {
     stopwatch.start();
-    const { url, username: cliUsername, password: cliPassword, directory, simulate, header } = argv;
+    const {
+      url,
+      username: cliUsername,
+      password: cliPassword,
+      directory,
+      simulate,
+      header,
+      rejectUnauthorized,
+      proxy
+    } = argv;
 
     let envUsername = process.env.POLARITY_USERNAME;
     let envPassword = process.env.POLARITY_PASSWORD;
@@ -64,14 +84,27 @@ const loadCmd = {
     const polarity = new Polarity(Logger);
 
     try {
-      await polarity.connect({
+      const connectOptions = {
         host: url,
         username: username,
-        password: password,
-        request: {
-          rejectUnauthorized: false
-        }
-      });
+        password: password
+      };
+
+      if (typeof rejectUnauthorized !== 'undefined' || typeof proxy !== 'undefined') {
+        connectOptions.request = {};
+      }
+
+      if (typeof rejectUnauthorized !== 'undefined') {
+        connectOptions.request.rejectUnauthorized = rejectUnauthorized;
+      }
+
+      if (typeof proxy !== 'undefined') {
+        connectOptions.request.proxy = proxy;
+      }
+
+      Logger.info( { ... connectOptions, password: '*******'}, 'Polarity Connection Options');
+
+      await polarity.connect(connectOptions);
 
       const files = await getFilesToLoad(polarity, directory);
       Logger.info('Files to Load', { files, elapsedTime: stopwatch.read() });
