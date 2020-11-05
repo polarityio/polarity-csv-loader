@@ -1,7 +1,7 @@
 {
   "main": "./main.js",
   "name": "polarity-csv-loader",
-  "version": "0.0.4-beta",
+  "version": "0.0.5-beta",
   "private": true,
   "dependencies": {
     "async": "^3.2.0",
@@ -9,7 +9,7 @@
     "winston": "^3.3.3",
     "yargs": "^16.0.3",
     "xbytes": "^1.6.2",
-    "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.4-beta",
+    "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.6-beta",
     "statman-stopwatch": "^2.11.1",
     "papaparse": "^5.3.0",
     "dotenv": "^8.2.0"
