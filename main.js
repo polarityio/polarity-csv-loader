@@ -4,7 +4,7 @@ const Stopwatch = require('statman-stopwatch');
 const path = require('path');
 
 const stopwatch = new Stopwatch();
-const Logger = require('./lib/logger');
+const { getLogger } = require('./lib/logger');
 
 const loadCmd = {
   command: 'load',
@@ -54,10 +54,18 @@ const loadCmd = {
         default: '',
         nargs: 1,
         describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
+      })
+      .option('logging', {
+        type: 'string',
+        default: 'info',
+        choices: ['error', 'warn', 'info', 'debug'],
+        nargs: 1,
+        describe: 'The logging level for the script.'
       });
   },
   handler: async (argv) => {
     stopwatch.start();
+
     const {
       url,
       username: cliUsername,
@@ -66,8 +74,11 @@ const loadCmd = {
       simulate,
       header,
       rejectUnauthorized,
-      proxy
+      proxy,
+      logging
     } = argv;
+
+    const Logger = getLogger(logging);
 
     let envUsername = process.env.POLARITY_USERNAME;
     let envPassword = process.env.POLARITY_PASSWORD;
@@ -80,7 +91,18 @@ const loadCmd = {
       return;
     }
 
-    Logger.info('Starting', { url, username, password: '**********', directory });
+    Logger.info('Starting Polarity CSV Loader', {
+      url,
+      username,
+      password: '*******',
+      directory,
+      simulate,
+      header,
+      rejectUnauthorized,
+      proxy,
+      logging
+    });
+
     const polarity = new Polarity(Logger);
 
     try {
@@ -98,36 +120,37 @@ const loadCmd = {
         connectOptions.request.rejectUnauthorized = rejectUnauthorized;
       }
 
-      if (typeof proxy !== 'undefined') {
+      if (typeof proxy !== 'undefined' && proxy && proxy.length > 0) {
         connectOptions.request.proxy = proxy;
       }
 
-      Logger.info( { ... connectOptions, password: '*******'}, 'Polarity Connection Options');
+      Logger.info({ ...connectOptions, password: '*******' }, 'Polarity Connection Options');
 
       await polarity.connect(connectOptions);
 
-      const files = await getFilesToLoad(polarity, directory);
+      const files = await getFilesToLoad(polarity, directory, Logger);
       Logger.info('Files to Load', { files, elapsedTime: stopwatch.read() });
 
       for (const { channelId, channelName, filePath } of files) {
         try {
           if (!simulate) {
+            Logger.info(`Beginning to clear channel ${channelName}`, { elapsedTime: stopwatch.read() });
             const clearResult = await polarity.clearChannelById(channelId);
             Logger.info(`Finished clearing channel ${channelName}`, { clearResult, elapsedTime: stopwatch.read() });
           }
-          await loadCsvIntoChannel(polarity, filePath, channelId, header, simulate);
+          await loadCsvIntoChannel(polarity, filePath, channelId, header, simulate, Logger);
 
           // Rename and move the file to a finished directory
-          await moveFile(path.join(directory, 'completed'), filePath, simulate);
+          await moveFile(path.join(directory, 'completed'), filePath, simulate, Logger);
         } catch (fileLoadError) {
           Logger.error('Error loading file', { filePath, channelName, channelId });
-          await moveFile(path.join(directory, 'failed'), filePath, simulate);
+          await moveFile(path.join(directory, 'failed'), filePath, simulate, Logger);
         }
       }
     } catch (e) {
       Logger.error('Error loading CSV files', e);
     } finally {
-      const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate);
+      const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate, Logger);
       Logger.info('Removed old completed files', { cleanupResult });
       Logger.info(`Total Run Time: ${stopwatch.read()}`);
 
