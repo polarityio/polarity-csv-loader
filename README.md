@@ -51,6 +51,9 @@ Options:
   --directory  Directory to read CSV files from  [string] [required]
   --simulate   If provided, the loader will log a preview of the actions it would take but no actions will be taken.  [boolean] [default: false]
   --headers    If provided, the loader will skip the first row in the CSV and treat it as a header  [boolean] [default: false]
+  --rejectUnauthorized If provided, the loader will reject unauthorized SSL connections [boolean] [default: true]
+  --proxy      Proxy configuration of the form 'http://<username>:<password>@<host>:<port>' [string] [default: '']
+  --logging    The logging level for the script.  [string] [choices: "error", "warn", "info", "debug"] [default: "info"]
 ```
 
 ### Directory Structure
