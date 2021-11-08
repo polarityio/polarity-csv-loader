@@ -47,7 +47,7 @@ const loadCmd = {
       .option('rejectUnauthorized', {
         type: 'boolean',
         default: true,
-        describe: 'If provided, the loader will skip the first row in the CSV and treat it as a header'
+        describe: 'If provided, the loader will reject unauthorized SSL connections'
       })
       .option('proxy', {
         type: 'string',
