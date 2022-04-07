@@ -150,8 +150,13 @@ const loadCmd = {
     } catch (e) {
       Logger.error('Error loading CSV files', e);
     } finally {
-      const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate, Logger);
-      Logger.info('Removed old completed files', { cleanupResult });
+      Logger.info(path.join(directory, 'completed'));
+      try{
+        const cleanupResult = await cleanupOldFiles(path.join(directory, 'completed'), simulate, Logger);
+        Logger.info('Removed old completed files', { cleanupResult });
+      } catch(cleanupError){
+        Logger.error('Cleanup of old completed files failed', cleanupError);
+      }
       Logger.info(`Total Run Time: ${stopwatch.read()}`);
 
       if (polarity && polarity.isConnected) {
