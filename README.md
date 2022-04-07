@@ -90,7 +90,7 @@ If you'd like to test the script without actually loading data use the `--simula
 ./polarity-csv-loader.sh -username csv_loader --password password123 --url https://polarity.dev --directory /home/centos/upload-data --simulate
 ```
 
-Note that if it's the first time running the script, create a `completed` directory inside the directory specified with the `--directory` command.
+> Note that if it's the first time running the script, create a `completed` directory inside the directory specified with the `--directory` command.
 
 You can also pass the Polarity username and password via an environment file.  To do this, copy the `.env.tmpl` file to a `.env` file which should be located at the top level of the `polarity-csv-loader` directory.  Edit the `.env` file so that it contains your `POLARITY_USERNAME` and `POLARITY_PASSWORD` environment variables.
 
@@ -107,5 +107,17 @@ If the `.env` file is present and contains the `POLARITY_PASSWORD` or `POLARITY_
 # With `.env` file set
 ./polarity-csv-loader.sh --url https://polarity.dev --directory /home/centos/upload-data 
 ```
+
+### Troubleshooting
+
+If you see an error with the following output:
+
+```
+Cleanup of old completed files failed spawn /bin/sh ENOENT",
+```
+
+Check to ensure that the directory specified by the `--directory` flag is owned by the user that is running the `polarity-csv-loader` script.
+
+If you are running the script using the `--simulate` command, make sure that there is a directory called `completed` inside the directory specified by `--directory` (you may need to create this manually if this is the first time the script has run)
 
 
