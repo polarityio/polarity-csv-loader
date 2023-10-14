@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "async": "^3.2.4",
-    "winston": "^3.3.3",
+    "winston": "^3.10.0",
     "yargs": "^16.2.0",
     "xbytes": "^1.7.0",
     "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.18-beta",
