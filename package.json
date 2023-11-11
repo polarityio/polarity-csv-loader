@@ -9,7 +9,7 @@
     "yargs": "^16.2.0",
     "xbytes": "^1.7.0",
     "polarity-node-rest-api": "polarityio/polarity-node-rest-api#0.0.18-beta",
-    "statman-stopwatch": "^2.13.0",
+    "statman-stopwatch": "^2.13.2",
     "papaparse": "^5.3.1",
     "dotenv": "^8.6.0"
   }
