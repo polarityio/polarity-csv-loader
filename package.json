@@ -4,7 +4,7 @@
   "version": "1.0.1",
   "private": true,
   "dependencies": {
-    "async": "^3.2.4",
+    "async": "^3.2.5",
     "winston": "^3.3.3",
     "yargs": "^16.2.0",
     "xbytes": "^1.7.0",
